@@ -1,5 +1,5 @@
   - name: Configuraciones en la VM de Azure
-    hosts: vm
+    hosts: vm-azure
     tasks:
     - name: Instalar podman
       package:
