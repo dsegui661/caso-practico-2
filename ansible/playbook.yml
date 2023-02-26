@@ -1,5 +1,7 @@
   - name: Configuraciones en la VM de Azure
     hosts: vmazure
+    become: true
+    remote_user: admuser
     tasks:
     - name: Instalar podman
       package:

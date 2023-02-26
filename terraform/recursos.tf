@@ -153,7 +153,7 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
+    publisher = "OpenLogic"
     offer     = var.so_name
     sku       = var.so_version
     version   = "latest"
