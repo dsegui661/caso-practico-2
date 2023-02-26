@@ -23,6 +23,7 @@ avns_name = "avnsCasoPracticoDos"
 # Maquina virtual
 vm_name = "vm01CasoPracticoDos"
 ani_name = "aniCasoPracticoDos"
-admuser_name = "admuser"
+ssh_user = "admuser"
 so_name = "UbuntuServer"
 so_version = "16.04-LTS"
+public_key_path = "~/.ssh/id_rsa.pub"

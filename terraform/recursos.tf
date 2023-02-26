@@ -137,14 +137,14 @@ resource "azurerm_linux_virtual_machine" "vm01" {
   resource_group_name = azurerm_resource_group.argr.name
   location            = var.location
   size                = "Standard_F2"
-  admin_username      = var.admuser_name
+  admin_username      = var.ssh_user
   network_interface_ids = [
     azurerm_network_interface.ani01.id,
   ]
 
   admin_ssh_key {
-    username   = var.admuser_name
-    public_key = file("~/.ssh/id_rsa.pub")
+    username   = var.ssh_user
+    public_key = file(var.public_key_path)
   }
 
   os_disk {

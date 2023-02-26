@@ -71,11 +71,6 @@ variable "ani_name" {
   description = "Nombre de la interfaz de red de la VM"
 }
 
-variable "admuser_name" {
-  type        = string
-  description = "Nombre del usuario de la VM"
-}
-
 variable "so_name" {
   type        = string
   description = "Nombre del Sistema Operativo de la VM"
@@ -84,4 +79,14 @@ variable "so_name" {
 variable "so_version" {
   type        = string
   description = "Versión del SO de la VM"
+}
+
+variable "public_key_path" {
+  type = string
+  description = "Ruta para la clave pública de acceso a las instancias"
+}
+
+variable "ssh_user" {
+  type = string
+  description = "Usuario para hacer ssh"
 }
