@@ -89,22 +89,24 @@ resource "azurerm_public_ip" "public_ip" {
 
 # Apertura puerto 22
 resource "azurerm_network_security_group" "nsg" {
-  name                = "ssh_nsg"
+  name                = "ports_nsg"
   location            = var.location
   resource_group_name = azurerm_resource_group.argr.name
 
   security_rule {
-    name                       = "allow_ssh_sg"
+    name                       = "allow_ports_sg"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "22"
+    destination_port_ranges     = ["22","443"]
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 }
+
+
 
 # ###########################
 # Recurso: Virtual Machine

@@ -1,0 +1,20 @@
+# BASE
+FROM alpine
+# Instalacion nginx
+RUN apk add nginx; \
+    mkdir /run/nginx/ 
+    
+# Copiamos la web
+ADD $PWD/website/index.html /var/www/localhost/htdocs/index.html
+
+# CONFIGURACIONES
+# nginx configuration
+ADD $PWD/config/default.conf /etc/nginx/http.d/default.conf
+# keys and certs
+ADD $PWD/ssl/nginx.key /etc/ssl/private/
+ADD $PWD/ssl/nginx.crt /etc/ssl/certs/
+
+EXPOSE 443
+
+# RUN COMMAND
+CMD ["/bin/sh", "-c", "nginx -g 'daemon off;'; nginx -s reload;"]
