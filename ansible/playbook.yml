@@ -7,6 +7,16 @@
       package:
         name: "podman"
         state: present
+    - name: Clonar el repositorio para crear la imagen de Podman
+      git:
+        repo: https://github.com/dsegui661/caso-practico-2.git
+        dest: /opt/
+        clone: yes
+        update: yes
+    - name: "Crea la imagen de nginx"
+      shell: |
+         cd /opt/caso-practico-2/resources
+         podman build --tag nginx:casopractico2 -f ./Containerfile
 #    - name: Pull an image
 #      containers.podman.podman_image:
 #        name: httpd

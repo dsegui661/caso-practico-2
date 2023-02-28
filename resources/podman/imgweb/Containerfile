@@ -10,7 +10,9 @@ ADD $PWD/website/index.html /var/www/localhost/htdocs/index.html
 # CONFIGURACIONES
 # nginx configuration
 ADD $PWD/config/default.conf /etc/nginx/http.d/default.conf
-# keys and certs
+ADD $PWD/config/.htpasswd /etc/nginx/.htpasswd
+
+# Certificado
 ADD $PWD/ssl/nginx.key /etc/ssl/private/
 ADD $PWD/ssl/nginx.crt /etc/ssl/certs/
 
