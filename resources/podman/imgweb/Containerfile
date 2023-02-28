@@ -1,8 +1,7 @@
 # BASE
 FROM alpine
 # Instalacion nginx
-RUN apk add nginx; \
-    mkdir /run/nginx/ 
+RUN apk add nginx
     
 # Copiamos la web
 ADD $PWD/website/index.html /var/www/localhost/htdocs/index.html
