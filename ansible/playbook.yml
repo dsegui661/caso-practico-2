@@ -39,6 +39,28 @@
         push_args:
           dest: acrcasopracticodos.azurecr.io
 
+
+    - name: Pull an image
+      containers.podman.podman_image:
+        name: acrcasopracticodos.azurecr.io/nginx:casopractico2
+        username: "acrCasoPracticoDos"
+        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+
+
+    - name: Ejecuta contenedor
+      containers.podman.podman_container:
+        name: webunir
+        image: nginx:casopractico2
+        state: started
+        detach: true
+        exposed_ports:
+          - 443
+        ports:
+          - 443:443
+
+
+
+
 #    - name: Build a basic OCI image
 #      containers.podman.podman_image:
 #        name: nginx:casopractico2
