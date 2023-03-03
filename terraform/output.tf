@@ -40,4 +40,13 @@ output "network_interface_private_ip" {
   description = "private ip addresses of the vm nics"
   value       = azurerm_network_interface.ani01.private_ip_address
 }
+output "admin_username" {
+  description = "The Username associated with the Container Registry Admin account - if the admin account is enabled."
+  value       = azurerm_container_registry.acr.admin_username
+}
 
+output "admin_password" {
+  description = "The Password associated with the Container Registry Admin account - if the admin account is enabled."
+  value       = azurerm_container_registry.acr.admin_password
+  sensitive   = true
+}

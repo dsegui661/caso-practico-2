@@ -22,20 +22,26 @@
 #         cd /opt/github/resources/podman/imgweb
 #         podman build --tag nginx:casopractico2 -f ./Containerfile
 
-#   - name: Build and push an image using username and password
-#     containers.podman.podman_image:
-#       name: nginx:casopractico2
-#       path: /opt/github/resources/podman/imgweb
-#       push: yes
-#       username: bugs
-#       password: "{{ vault_registry_password }}"
-#       push_args:
-#         dest: quay.io/acme
+    - name: Log into DockerHub
+      docker_login:
+        username: dseguiunir
+        password: segui661Unir
 
-    - name: Build a basic OCI image
+
+    - name: Build and push an image using username and password
       containers.podman.podman_image:
         name: nginx:casopractico2
         path: /opt/github/resources/podman/imgweb
+        push: yes
+        username: "acrCasoPracticoDos"
+        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+        push_args:
+          dest: acrcasopracticodos.azurecr.io
+
+#    - name: Build a basic OCI image
+#      containers.podman.podman_image:
+#        name: nginx:casopractico2
+#        path: /opt/github/resources/podman/imgweb
 
 #    - name: Pull an image
 #      containers.podman.podman_image:
