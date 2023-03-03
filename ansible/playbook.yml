@@ -22,10 +22,10 @@
 #         cd /opt/github/resources/podman/imgweb
 #         podman build --tag nginx:casopractico2 -f ./Containerfile
 
-    - name: Log into DockerHub
-      docker_login:
-        username: dseguiunir
-        password: segui661Unir
+#    - name: Log into DockerHub
+#      docker_login:
+#        username: dseguiunir
+#        password: segui661Unir
 
 
     - name: Build and push an image using username and password
