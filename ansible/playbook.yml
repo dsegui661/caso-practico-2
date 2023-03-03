@@ -17,8 +17,9 @@
         dest: /opt/github
         clone: yes
         update: yes
-#    - name: "Crea la imagen de nginx"
-#      shell: |
+    - name: "Descarla la imagen de alpine"
+      shell: |
+          podman pull alpine:3.17
 #         cd /opt/github/resources/podman/imgweb
 #         podman build --tag nginx:casopractico2 -f ./Containerfile
 
