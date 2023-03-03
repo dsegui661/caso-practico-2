@@ -1,0 +1,51 @@
+# ##########################################
+#
+#    Parte 2 - Automatizaciones en AKS
+#
+# #########################################
+
+# NOTA: Previo a esta paso copiaremos el Kubeconfig generado
+#       por terraform al crear el cluster a la carpeta 
+#       /home/usuario/.kube/config para tener acceso al cluster
+
+- name: Creacion de un namespace
+  kubernetes.core.k8s:
+    name: unir
+    api_version: v1
+    kind: Namespace
+    state: present
+
+# - name: "Descarga la imagen de alpine" 
+#    shell: |
+#        podman pull jenkins/jenkins:lts
+
+
+# - name: Envia la imagen a nuestro repositorio de imagenes
+#  containers.podman.podman_image:
+#    name: nginx:casopractico2
+#    path: /opt/github/resources/podman/imgweb
+#    push: yes
+#    username: "acrCasoPracticoDos"
+#    password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+#    push_args:
+#        dest: acrcasopracticodos.azurecr.io
+
+- name: Haremos el despliege de los permisos para el deploy
+  kubernetes.core.k8s:
+    state: present
+    src: ../resources/aks/rabac_jenkins.yml
+
+- name: Haremos el despliege del alamcenamiento persistente
+  kubernetes.core.k8s:
+    state: present
+    src: ../resources/aks/store_jenkins.yml
+
+- name: Haremos el despliege de Jenkins
+  kubernetes.core.k8s:
+    state: present
+    src: ../resources/aks/deploy_jenkins.yml
+
+- name: Creamos los servicios para el deploy de Jenkins
+  kubernetes.core.k8s:
+    state: present
+    src: ../resources/aks/store_jenkins.yml

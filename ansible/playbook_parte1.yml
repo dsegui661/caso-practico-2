@@ -1,0 +1,64 @@
+ # ##########################################
+ #
+ #    Parte 1 - Automatizaciones en la VM
+ #
+ # ##########################################
+
+ # NOTA: Previo a esta paso copiaremos la IP publica de la VM
+ #       en el fichero hosts y actualizaremos la contraseña
+ #       de acceso a nuestro repositorio en este yml
+
+  - name: Configuraciones en la VM de Azure
+    hosts: vmazure
+    become: true
+    remote_user: admuser
+    tasks:
+    - name: Instalar podman
+      package:
+        name: "podman"
+        state: present
+    - name: Instalar git
+      package:
+        name: "git-all"
+        state: present
+    - name: Clonar el repositorio para crear la imagen de Podman
+      git:
+        repo: https://github.com/dsegui661/caso-practico-2.git
+        dest: /opt/github
+        clone: yes
+        update: yes
+
+    # Workaround para no hacer login en docker para crear la imagen
+    - name: "Descarga la imagen de alpine" 
+      shell: |
+          podman pull alpine:3.17
+
+    - name: Contruye la imagen y subela a nuestro repositorio de imagenes
+      containers.podman.podman_image:
+        name: nginx:casopractico2
+        path: /opt/github/resources/podman/imgweb
+        push: yes
+        username: "acrCasoPracticoDos"
+        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+        push_args:
+          dest: acrcasopracticodos.azurecr.io
+
+
+    - name: Descarga la imagen de nuestro repositorio de imagenes
+      containers.podman.podman_image:
+        name: acrcasopracticodos.azurecr.io/nginx:casopractico2
+        username: "acrCasoPracticoDos"
+        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+
+
+    - name: Crea el contenedor
+      containers.podman.podman_container:
+        name: webunir
+        image: nginx:casopractico2
+        state: started
+        detach: true
+        exposed_ports:
+          - 443
+        ports:
+          - 443:443
+
