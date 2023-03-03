@@ -8,12 +8,17 @@
 #       por terraform al crear el cluster a la carpeta 
 #       /home/usuario/.kube/config para tener acceso al cluster
 
-- name: Creacion de un namespace
-  kubernetes.core.k8s:
-    name: unir
-    api_version: v1
-    kind: Namespace
-    state: present
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  tasks:
+
+  - name: Creacion de un namespace
+    kubernetes.core.k8s:
+      name: unir
+      api_version: v1
+      kind: Namespace
+      state: present
 
 # - name: "Descarga la imagen de alpine" 
 #    shell: |
@@ -30,22 +35,22 @@
 #    push_args:
 #        dest: acrcasopracticodos.azurecr.io
 
-- name: Haremos el despliege de los permisos para el deploy
-  kubernetes.core.k8s:
-    state: present
-    src: ../resources/aks/rabac_jenkins.yml
+  - name: Haremos el despliege de los permisos para el deploy
+    kubernetes.core.k8s:
+      state: present
+      src: ../resources/aks/rabac_jenkins.yml
 
-- name: Haremos el despliege del alamcenamiento persistente
-  kubernetes.core.k8s:
-    state: present
-    src: ../resources/aks/store_jenkins.yml
+  - name: Haremos el despliege del alamcenamiento persistente
+    kubernetes.core.k8s:
+      state: present
+      src: ../resources/aks/store_jenkins.yml
 
-- name: Haremos el despliege de Jenkins
-  kubernetes.core.k8s:
-    state: present
-    src: ../resources/aks/deploy_jenkins.yml
+  - name: Haremos el despliege de Jenkins
+    kubernetes.core.k8s:
+      state: present
+      src: ../resources/aks/deploy_jenkins.yml
 
-- name: Creamos los servicios para el deploy de Jenkins
-  kubernetes.core.k8s:
-    state: present
-    src: ../resources/aks/store_jenkins.yml
+  - name: Creamos los servicios para el deploy de Jenkins
+    kubernetes.core.k8s:
+      state: present
+      src: ../resources/aks/store_jenkins.yml
