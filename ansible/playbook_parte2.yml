@@ -8,11 +8,50 @@
 #       por terraform al crear el cluster a la carpeta 
 #       /home/usuario/.kube/config para tener acceso al cluster
 
-  - name: Configuraciones de contenedores en AKS
-    hosts: vmazure
-    become: true
-    remote_user: admuser
-    tasks:
+- name: Configuraciones de contenedores en AKS
+  hosts: vmazure
+  become: true
+  remote_user: admuser
+  tasks:
+      - name: Create a directory if it does not exist
+        ansible.builtin.file:
+          path: /home/admuser/.kube
+          state: directory
+          mode: '0755'
+      - name: Copy file with owner and permissions
+        ansible.builtin.copy:
+          src: /home/dsegui/caso-practico-2/terraform/kubeconfig
+          dest: /home/admuser/.kube/config
+          owner: admuser
+          group: admuser
+          mode: '0644'
+
+      - name: Create a kube repo file
+        file:
+          path: "/etc/yum.repos.d/kubernetes.repo"
+          state: "touch"
+
+      - name: write repo information in kube repo file
+        blockinfile:
+          path: "/etc/yum.repos.d/kubernetes.repo"
+          block: |
+                [kubernetes]
+                name=Kubernetes
+                baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+                enabled=1
+                gpgcheck=1
+                repo_gpgcheck=1
+                gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+      - name: kubectl ensure wget is installed
+        yum:
+          name: kubectl
+          state: present
+          update_cache: true
+        become: true
+
+
+
       - name: Creacion de un namespace
         kubernetes.core.k8s:
           name: unir
@@ -20,37 +59,22 @@
           kind: Namespace
           state: present
 
-# - name: "Descarga la imagen de alpine" 
-#    shell: |
-#        podman pull jenkins/jenkins:lts
+      - name: Haremos el despliege de los permisos para el deploy
+        kubernetes.core.k8s:
+          state: present
+          src: ../resources/aks/rabac_jenkins.yml
 
+      - name: Haremos el despliege del alamcenamiento persistente
+        kubernetes.core.k8s:
+          state: present
+          src: ../resources/aks/store_jenkins.yml
 
-# - name: Envia la imagen a nuestro repositorio de imagenes
-#  containers.podman.podman_image:
-#    name: nginx:casopractico2
-#    path: /opt/github/resources/podman/imgweb
-#    push: yes
-#    username: "acrCasoPracticoDos"
-#    password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
-#    push_args:
-#        dest: acrcasopracticodos.azurecr.io
+      - name: Haremos el despliege de Jenkins
+        kubernetes.core.k8s:
+          state: present
+          src: ../resources/aks/deploy_jenkins.yml
 
-    - name: Haremos el despliege de los permisos para el deploy
-      kubernetes.core.k8s:
-        state: present
-        src: ../resources/aks/rabac_jenkins.yml
-
-    - name: Haremos el despliege del alamcenamiento persistente
-      kubernetes.core.k8s:
-        state: present
-        src: ../resources/aks/store_jenkins.yml
-
-    - name: Haremos el despliege de Jenkins
-      kubernetes.core.k8s:
-        state: present
-        src: ../resources/aks/deploy_jenkins.yml
-
-    - name: Creamos los servicios para el deploy de Jenkins
-      kubernetes.core.k8s:
-        state: present
-        src: ../resources/aks/store_jenkins.yml
+      - name: Creamos los servicios para el deploy de Jenkins
+        kubernetes.core.k8s:
+          state: present
+          src: ../resources/aks/store_jenkins.yml
