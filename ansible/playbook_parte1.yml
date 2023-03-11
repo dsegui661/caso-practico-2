@@ -13,14 +13,17 @@
     become: true
     remote_user: admuser
     tasks:
+
     - name: Instalar podman
       package:
         name: "podman"
         state: present
+
     - name: Instalar git
       package:
         name: "git-all"
         state: present
+
     - name: Clonar el repositorio para crear la imagen de Podman
       git:
         repo: https://github.com/dsegui661/caso-practico-2.git
@@ -28,7 +31,6 @@
         clone: yes
         update: yes
 
-    # Workaround para no hacer login en docker para crear la imagen
     - name: "Descarga la imagen de alpine" 
       shell: |
           podman pull alpine:3.17
@@ -39,17 +41,15 @@
         path: /opt/github/resources/podman/imgweb
         push: yes
         username: "acrCasoPracticoDos"
-        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
+        password: "XWpi7GbQB/xUyP4qsIs+HmnOpLz6h4DQ631BzZX26f+ACRA0ng6D"
         push_args:
           dest: acrcasopracticodos.azurecr.io
-
 
     - name: Descarga la imagen de nuestro repositorio de imagenes
       containers.podman.podman_image:
         name: acrcasopracticodos.azurecr.io/nginx:casopractico2
         username: "acrCasoPracticoDos"
-        password: "sMqHL3AQ9N02giS3dQ5cS4El4nzb+tuOZRXcV5qS6H+ACRAVr03s"
-
+        password: "XWpi7GbQB/xUyP4qsIs+HmnOpLz6h4DQ631BzZX26f+ACRA0ng6D"
 
     - name: Crea el contenedor
       containers.podman.podman_container:
