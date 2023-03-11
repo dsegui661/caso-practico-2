@@ -1,6 +1,6 @@
-# ##################################
-#   VARIABLES DEFINICION RECURSOS 
-# ##################################
+# -------------------------
+# Valores de las variables
+# -------------------------
 
 # Globales
 location = "West Europe"

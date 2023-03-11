@@ -1,7 +1,11 @@
-# ###########################
-# Recurso: Resource Group
+# --------------------------------------------
+# Definición de creación de recursos en Azure
+# -------------------------------------------
+
+# ###############################
+# Recurso: Resource Group 
 # Descripción: Grupo de recursos para elementos de Azure
-# ###########################
+# ##############################
 
 resource "azurerm_resource_group" "argr" {
   name     = var.resource_group_name

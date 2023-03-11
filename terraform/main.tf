@@ -1,6 +1,7 @@
-# --------------------
+# -----------------------------------
 # Parametros terraform
-# ---------------------
+# Versiones mínimas para la ejecución
+# -----------------------------------
 terraform {
   required_version = ">=0.12"
 

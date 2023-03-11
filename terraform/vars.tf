@@ -1,6 +1,8 @@
-#
-# Variables Globales
-#
+# --------------------------------------
+# Variables para el despliegue en Azure
+# --------------------------------------
+
+# Variables globales
 
 variable "location" {
   type = string
@@ -13,9 +15,8 @@ variable "resource_group_name" {
   description = "Nombre del grupo de recursos en Azure"
 }
 
-#
 # Variables del cluster de AKS
-#
+
 
 variable "cluster_name" {
   type        = string
@@ -32,18 +33,16 @@ variable "system_node_count" {
   description = "Numero de Workers nodes"
 }
 
-#
 # Variables del Registro de contenedores
-#
+
 
 variable "acr_name" {
   type        = string
   description = "Nombre del registro de contenedores"
 }
 
-#
 # Variables de la red
-#
+
 
 variable "avn_name" {
   type        = string
@@ -56,10 +55,8 @@ variable "avns_name" {
 }
 
 
-
-#
 # Variables de la máquina virtual
-#
+
 
 variable "vm_name" {
   type        = string
