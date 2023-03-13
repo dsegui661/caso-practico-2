@@ -13,26 +13,34 @@
   become: true
   remote_user: admuser
   tasks:
-      - name: Create a directory if it does not exist
+      - name: Creamos el directorio para el fichero de configuracion de k8s
         ansible.builtin.file:
           path: /root/.kube
           state: directory
           mode: '0755'
 
-      - name: Copy file with owner and permissions
+      - name: Copiamos el fichero de configuracion de k8s 
         ansible.builtin.copy:
           src: /home/dsegui/caso-practico-2/terraform/kubeconfig
           dest: /root/.kube/config
           mode: '0644'
 
+            #   - name: Instalamos Python3
+            # ansible.builtin.yum:
+            # name:
+            # - python3
+            # state: present
 
-      - name: instalamos  pre-requisitos
+            #      - name: Establecemos Python3 como version por defecto
+            # ansible.builtin.shell: sudo ln -fs /usr/bin/python3.6 /usr/bin/python
+
+      - name: Instalamos  pre-requisitos para el modulo kubernetes.core.k8s
         pip:
           name:
             - PyYAML
             - kubernetes 
             - jsonpath
-        become: true
+              # become: true
 
       - name: Creacion de un namespace
         kubernetes.core.k8s:
@@ -44,19 +52,19 @@
       - name: Haremos el despliege de los permisos para el deploy
         kubernetes.core.k8s:
           state: present
-          src: ../resources/aks/rabac_jenkins.yml
+          src: /opt/github/resources/aks/rabac_jenkins.yml
 
       - name: Haremos el despliege del alamcenamiento persistente
         kubernetes.core.k8s:
           state: present
-          src: ../resources/aks/store_jenkins.yml
+          src: /opt/github/resources/aks/store_jenkins.yml
 
       - name: Haremos el despliege de Jenkins
         kubernetes.core.k8s:
           state: present
-          src: ../resources/aks/deploy_jenkins.yml
+          src: /opt/github/resources/aks/deploy_jenkins.yml
 
       - name: Creamos los servicios para el deploy de Jenkins
         kubernetes.core.k8s:
           state: present
-          src: ../resources/aks/store_jenkins.yml
+          src: /opt/github/resources/aks/service_jenkins.yml
