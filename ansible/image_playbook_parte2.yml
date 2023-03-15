@@ -1,0 +1,40 @@
+# ##########################################
+#
+#    Parte 2 - Automatizaciones en AKS
+#
+# #########################################
+
+# NOTA: Previo a esta paso copiaremos el Kubeconfig generado
+#       por terraform al crear el cluster a la carpeta 
+#       /home/usuario/.kube/config para tener acceso al cluster
+
+- name: Configuraciones de contenedores en AKS
+  hosts: vmazure
+  become: true
+  remote_user: admuser
+  tasks:
+
+    # - name: Descargamos la imagen de Jenkins a local
+    # containers.podman.podman_image:
+    #  name: jenkins
+    #  tag: lts
+
+  - name: "Descarga la imagen de alpine"
+    shell: |
+       podman pull jenkinsci/blueocean
+
+  - name: Etiquetamos la imagen   
+    containers.podman.podman_tag:
+      image: jenkinsci/blueocean
+      target_names:
+        - jenkinsci:casopractico2
+
+  - name: Contruye la imagen y subela a nuestro repositorio de imagenes
+    containers.podman.podman_image:
+       name: jenkinsci:casopractico2
+       push: yes
+       username: "acrCasoPracticoDos"
+       password: "/v3iDMtDgoDLDhWy1YLvyuygGtWXQbs+ONqsUS1pDU+ACRCHnR9o"
+       push_args:
+          dest: acrcasopracticodos.azurecr.io
+
