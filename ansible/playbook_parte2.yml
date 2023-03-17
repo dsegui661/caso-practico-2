@@ -8,63 +8,93 @@
 #       por terraform al crear el cluster a la carpeta 
 #       /home/usuario/.kube/config para tener acceso al cluster
 
-- name: Configuraciones de contenedores en AKS
+
+- name: Fase1 - Preparar imagen para desplegar en AKS
   hosts: vmazure
   become: true
   remote_user: admuser
   tasks:
-      - name: Creamos el directorio para el fichero de configuracion de k8s
-        ansible.builtin.file:
-          path: /root/.kube
-          state: directory
-          mode: '0755'
+    - name: "Descarga la imagen de jenkins"
+      shell: |
+         podman pull jenkinsci/blueocean
 
-      - name: Copiamos el fichero de configuracion de k8s 
-        ansible.builtin.copy:
-          src: /home/dsegui/caso-practico-2/terraform/kubeconfig
-          dest: /root/.kube/config
-          mode: '0644'
+    - name: Re-etiquetamos la imagen   
+      containers.podman.podman_tag:
+        image: jenkinsci/blueocean
+        target_names:
+          - jenkinsci:casopractico2
 
-      - name: Instalamos python3
-        ansible.builtin.shell: |
-          yum install centos-release-scl -y
-          yum install rh-python36 -y
-          cd /usr/bin
-          rm python
-          ln -s  /opt/rh/rh-python36/root/usr/bin/pip3 pip3
-          ln -s  /opt/rh/rh-python36/root/usr/bin/python python 
+    - name: Subimos la imagen a nuestro repositorio privado
+      containers.podman.podman_image:
+         name: jenkinsci:casopractico2
+         push: yes
+         username: "acrCasoPracticoDos"
+         password: "/v3iDMtDgoDLDhWy1YLvyuygGtWXQbs+ONqsUS1pDU+ACRCHnR9o"
+         push_args:
+            dest: acrcasopracticodos.azurecr.io
 
-      - name: Instalamos  pre-requisitos para el modulo kubernetes.core.k8s
-        pip:
-          name:
-            - PyYAML
-            - kubernetes 
-            - jsonpath
-              # become: true
 
-      - name: Creacion de un namespace
-        kubernetes.core.k8s:
-          name: unir
-          api_version: v1
-          kind: Namespace
-          state: present
+- name: Fase 2 - Configuraciones de contenedores en AKS
+  hosts: vmazure
+  become: true
+  remote_user: admuser
+  tasks:
+    - name: Creamos el directorio para el fichero de configuracion de k8s
+      ansible.builtin.file:
+        path: /root/.kube
+        state: directory
+        mode: '0755'
 
-      - name: Haremos el despliege de los permisos para el deploy
-        kubernetes.core.k8s:
-          state: present
-          src: /opt/github/resources/aks/rabac_jenkins.yml
+    - name: Copiamos el fichero de configuracion de k8s 
+      ansible.builtin.copy:
+       src: /home/dsegui/caso-practico-2/terraform/kubeconfig
+       dest: /root/.kube/config
+       mode: '0644'
 
-      - name: Haremos el despliege del alamcenamiento persistente
-        kubernetes.core.k8s:
-          state: present
-          src: /opt/github/resources/aks/store_jenkins.yml
+    - name: Instalamos Python3
+      ansible.builtin.shell: |
+        yum install centos-release-scl -y
+        yum install rh-python36 -y
+        cd /usr/bin
+        rm python
+        ln -s  /opt/rh/rh-python36/root/usr/bin/pip3 pip3
+        ln -s  /opt/rh/rh-python36/root/usr/bin/python python 
 
-      - name: Haremos el despliege de Jenkins
-        kubernetes.core.k8s:
-          state: present
-          src: /opt/github/resources/aks/deploy_jenkins.yml
+    - name: Instalamos  pre-requisitos para el modulo kubernetes.core.k8s
+      pip:
+        name:
+          - PyYAML
+          - kubernetes 
+          - jsonpath
 
-      - name: Creamos los servicios para el deploy de Jenkins
-        kubernetes.core.k8s:
-          state: present
-          src: /opt/github/resources/aks/service_jenkins.yml
+    - name: Creacion de un namespace
+      kubernetes.core.k8s:
+        name: unir
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Creamos los permisos para el deploy
+      kubernetes.core.k8s:
+        state: present
+        src: /opt/github/resources/aks/00-rbac_jenkins.yml
+
+    - name: Creamos el secret para el container resitry privado
+      kubernetes.core.k8s:
+        state: present
+        src: /opt/github/resources/aks/01-secret-azure-container-registry.yml
+
+    - name: Creamos el almacenamiento persistente
+      kubernetes.core.k8s:
+        state: present
+        src: /opt/github/resources/aks/02-store_jenkins.yml
+
+    - name: Hacemos el despliege de Jenkins
+      kubernetes.core.k8s:
+        state: present
+        src: /opt/github/resources/aks/03-deploy_jenkins.yml
+
+    - name: Creamos los servicios para el deploy de Jenkins
+      kubernetes.core.k8s:
+        state: present
+        src: /opt/github/resources/aks/service_jenkins.yml
