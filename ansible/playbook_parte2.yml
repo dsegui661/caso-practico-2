@@ -29,7 +29,7 @@
          name: jenkinsci:casopractico2
          push: yes
          username: "acrCasoPracticoDos"
-         password: "/v3iDMtDgoDLDhWy1YLvyuygGtWXQbs+ONqsUS1pDU+ACRCHnR9o"
+         password: "8ccJKZ0/ynlNModI3M5lBQsbyBntO3e7DXRTao7rc8+ACRCylgAK"
          push_args:
             dest: acrcasopracticodos.azurecr.io
 
@@ -97,4 +97,4 @@
     - name: Creamos los servicios para el deploy de Jenkins
       kubernetes.core.k8s:
         state: present
-        src: /opt/github/resources/aks/service_jenkins.yml
+        src: /opt/github/resources/aks/04-service_jenkins.yml
